@@ -1,4 +1,4 @@
-#include "user_server.h"
+#include "person_and_people.h"
 
 #include <numeric>
 #include <steam/isteamfriends.h>
@@ -6,9 +6,6 @@
 #include <ranges>
 
 namespace nashira {
-    // Properties
-    UserServer::Person UserServer::me{};
-
     namespace {
         // -- TO STEAM --
         CSteamID to_steam(const std::uint64_t id) {
@@ -16,34 +13,32 @@ namespace nashira {
         }
 
         // -- FROM STEAM --
-        UserServer::UserStatus from_steam(const EPersonaState state) {
+        UserStatus from_steam(const EPersonaState state) {
             switch (state) {
                 case k_EPersonaStateOffline:
                 case k_EPersonaStateInvisible:
                 case k_EPersonaStateMax:
-                    return UserServer::UserStatus::OFFLINE;
+                    return UserStatus::OFFLINE;
                 case k_EPersonaStateOnline:
                 case k_EPersonaStateLookingToTrade:
                 case k_EPersonaStateLookingToPlay:
-                    return UserServer::UserStatus::ONLINE;
+                    return UserStatus::ONLINE;
                 case k_EPersonaStateBusy:
-                    return UserServer::UserStatus::BUSY;
+                    return UserStatus::BUSY;
                 case k_EPersonaStateAway:
                 case k_EPersonaStateSnooze:
-                    return UserServer::UserStatus::AWAY;
+                    return UserStatus::AWAY;
             }
 
-            return UserServer::UserStatus::OFFLINE;
+            return UserStatus::OFFLINE;
         }
     }
 
-    // Functions
-    void UserServer::init() {
-        me = get_user_info(SteamUser()->GetSteamID().ConvertToUint64());
+    Person me() {
+        return get_person(SteamUser()->GetSteamID().ConvertToUint64());
     }
 
-
-    UserServer::Person UserServer::get_user_info(const uint64_t user_id) {
+    Person get_person(const uint64_t user_id) {
         return Person {
             .name = SteamFriends()->GetFriendPersonaName(to_steam(user_id)),
             .steam_id = user_id,
@@ -51,27 +46,30 @@ namespace nashira {
         };
     }
 
-    UserServer::People UserServer::get_friends_list() {
-        People friends {};
-
+    People get_friends_list() {
         const int friends_count { SteamFriends()->GetFriendCount(k_EFriendFlagImmediate) };
+        People friends {};
+        if (friends_count == -1) {
+            return friends;
+        }
+
         friends.users.reserve(friends_count);
 
-        for (int index : std::views::iota(0, friends_count)) {
-
+        for (const int index : std::views::iota(0, friends_count)) {
+            friends.users.push_back(get_person(SteamFriends()->GetFriendByIndex(index, k_EFriendFlagImmediate).ConvertToUint64()));
         }
+
+        return friends;
     }
 
-    void UserServer::update() {
-
-    }
 
     // ---- PEOPLE ----
 
-    void UserServer::People::update() const {
+    // Checks and updates people in the list. Returns true if some any changed, false otherwise
+    bool People::try_and_update() {
         bool any_updated{false};
 
-        for (Person user: users) {
+        for (Person& user: users) {
             const UserStatus status { from_steam(SteamFriends()->GetFriendPersonaState(to_steam(user.steam_id))) };
 
             if (user.user_status != status) {
@@ -80,8 +78,10 @@ namespace nashira {
             }
         }
 
-        if (any_updated) {
-            // Do a callback
-        }
+        return any_updated;
+    }
+
+    void People::invite_all() const {
+        // TODO
     }
 }

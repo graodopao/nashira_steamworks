@@ -25,8 +25,8 @@ endif()
 set(SOURCE_FILES src/main.cpp
         src/network_server.cpp
         src/network_server.h
-        src/user_server.cpp
-        src/user_server.h)
+        src/person_and_people.cpp
+        src/person_and_people.h)
 
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(nashira_steamworks ${SOURCE_FILES})

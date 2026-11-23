@@ -1,5 +1,5 @@
 #include "network_server.h"
-#include "user_server.h"
+#include "person_and_people.h"
 
 int main() {
     if (nashira::NetworkServer::try_init("480")) {
