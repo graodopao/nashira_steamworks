@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)  # CMake version check
 project(nashira_steamworks)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+set(CMAKE_CXX_STANDARD 20)
 
 
 set (STEAMWORKS_SDK_DIR "/home/trigo/Downloads/steamworks/sdk/" CACHE PATH "Path to the Steamworks SDK 'sdk' folder")
@@ -24,7 +24,9 @@ endif()
 # Add main.cpp file of the project root directory as a source file
 set(SOURCE_FILES src/main.cpp
         src/network_server.cpp
-        src/network_server.h)
+        src/network_server.h
+        src/user_server.cpp
+        src/user_server.h)
 
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(nashira_steamworks ${SOURCE_FILES})
