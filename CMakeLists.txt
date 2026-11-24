@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)  # CMake version check
 project(nashira_steamworks)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 
 set (STEAMWORKS_SDK_DIR "/home/trigo/Downloads/steamworks/sdk/" CACHE PATH "Path to the Steamworks SDK 'sdk' folder")

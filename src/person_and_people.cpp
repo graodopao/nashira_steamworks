@@ -1,6 +1,5 @@
 #include "person_and_people.h"
 
-#include <numeric>
 #include <steam/isteamfriends.h>
 #include <steam/isteamuser.h>
 #include <ranges>
@@ -13,24 +12,24 @@ namespace nashira {
         }
 
         // -- FROM STEAM --
-        UserStatus from_steam(const EPersonaState state) {
+        USER_STATUS from_steam(const EPersonaState state) {
             switch (state) {
                 case k_EPersonaStateOffline:
                 case k_EPersonaStateInvisible:
                 case k_EPersonaStateMax:
-                    return UserStatus::OFFLINE;
+                    return USER_STATUS::OFFLINE;
                 case k_EPersonaStateOnline:
                 case k_EPersonaStateLookingToTrade:
                 case k_EPersonaStateLookingToPlay:
-                    return UserStatus::ONLINE;
+                    return USER_STATUS::ONLINE;
                 case k_EPersonaStateBusy:
-                    return UserStatus::BUSY;
+                    return USER_STATUS::BUSY;
                 case k_EPersonaStateAway:
                 case k_EPersonaStateSnooze:
-                    return UserStatus::AWAY;
+                    return USER_STATUS::AWAY;
             }
 
-            return UserStatus::OFFLINE;
+            return USER_STATUS::OFFLINE;
         }
     }
 
@@ -70,7 +69,7 @@ namespace nashira {
         bool any_updated{false};
 
         for (Person& user: users) {
-            const UserStatus status { from_steam(SteamFriends()->GetFriendPersonaState(to_steam(user.steam_id))) };
+            const USER_STATUS status { from_steam(SteamFriends()->GetFriendPersonaState(to_steam(user.steam_id))) };
 
             if (user.user_status != status) {
                 user.user_status = status;

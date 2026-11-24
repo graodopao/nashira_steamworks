@@ -6,7 +6,6 @@
 #include "person_and_people.h"
 
 namespace nashira {
-
     // --- Program Flow ---
 
     /// Tries to initiate Steamworks. If returning false for any reason, you should exit your app
@@ -22,8 +21,6 @@ namespace nashira {
             fprintf(stderr, "Steamworks Initialization Error: %s", error_message);
             return false;
         }
-
-        UserServer::init();
 
         return true;
     }
